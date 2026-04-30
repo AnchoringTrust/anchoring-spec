@@ -1,12 +1,17 @@
 # anchoring-spec.org
 
-**Anchoring Specification (IEC)**
+**Anchoring Specification**
+
+*Semantic model: Independent External Chronology*
 
 ---
 
 ## What this is
 
-This repository contains the normative Anchoring Specification (IEC).
+This repository contains the normative Anchoring Specification.
+
+**Current version:** [v1.1](https://anchoring-spec.org/v1.1/) (Current)
+**Previous version:** [v1.0](https://anchoring-spec.org/v1.0/) (Frozen, permanently citable)
 
 Anchoring is a public infrastructure primitive built on cryptographic commitments. It establishes one property only:
 
@@ -57,8 +62,10 @@ If any behavior in an implementation conflicts with this specification, the spec
 ## Structure
 
 ```
-/                          → Current normative version (v1.0)
+/                          → Current normative version (v1.1)
+/v1.1/                     → Permanent, citable v1.1 (current)
 /v1.0/                     → Permanent, citable v1.0
+/proof-container/          → Proof Container Specification v1.0
 /one-page/                 → Compact academic reference
 /appendix/why-anchoring/   → Non-normative context (informative only)
 ```
@@ -68,21 +75,21 @@ If any behavior in an implementation conflicts with this specification, the spec
 ## How to cite
 
 ```
-Anchoring Specification (IEC), Version 1.0.
-Published: February 2026.
-Canonical URL: https://anchoring-spec.org/v1.0/
+Anchoring Specification, Version 1.1.
+Published: April 2026.
+Canonical URL: https://anchoring-spec.org/v1.1/
 Repository: https://github.com/AnchoringTrust/anchoring-spec
 License: Public Domain (Unlicense)
 ```
 
 BibTeX:
 ```bibtex
-@misc{iec-anchoring-v1,
-  title        = {Anchoring Specification ({IEC})},
-  version      = {1.0},
+@misc{anchoring-spec-v1-1,
+  title        = {Anchoring Specification},
+  version      = {1.1},
   year         = {2026},
-  url          = {https://anchoring-spec.org/v1.0/},
-  note         = {Public domain. Normative specification for cryptographic anchoring.}
+  url          = {https://anchoring-spec.org/v1.1/},
+  note         = {Public domain. Normative specification for cryptographic anchoring. Semantic model: Independent External Chronology.}
 }
 ```
 
@@ -90,7 +97,7 @@ BibTeX:
 
 ## Versioning
 
-IEC uses **MAJOR.MINOR** versioning.
+This specification uses **MAJOR.MINOR** versioning.
 
 - **MAJOR** increments indicate breaking semantic changes
 - **MINOR** increments indicate clarifications without semantic change
@@ -100,6 +107,7 @@ All published versions remain permanently accessible. Versions are immutable onc
 ### Immutability discipline
 
 - v1.0 text is **frozen**. It will not be modified after publication.
+- v1.1 supersedes v1.0 as the current version. v1.1 is a MINOR editorial revision (title and governance section); no semantic changes.
 - Corrections are published as errata (e.g., `v1.0-errata`) or as a new minor version (`v1.1`).
 - Each version is permanently citable at its canonical URL.
 
@@ -107,9 +115,13 @@ All published versions remain permanently accessible. Versions are immutable onc
 
 ## Governance
 
-The Anchoring Specification is a public, versioned technical specification.
+The Anchoring Specification is a public, versioned technical specification, released into the public domain.
 
-While IEC was initially authored and published by Umarise, the specification is open for implementation by any party without restriction. Governance is designed to evolve independently of any single organization or implementation.
+It is currently authored and maintained by the Umarise team. There is no foundation, consortium, or multi-stakeholder governance body. This is a single-maintainer specification.
+
+The specification is open for implementation by any party without restriction. Any party may fork, mirror, or republish it under any terms permitted by the public domain.
+
+External co-maintainers and multi-stakeholder governance are welcome and may be adopted if and when adoption warrants it. Until then, governance independence is not claimed. **Technical independence** (the property that proofs verify without the issuer) is established by Section 9 of the spec and is independent of governance.
 
 No implementation has normative authority over the specification.
 

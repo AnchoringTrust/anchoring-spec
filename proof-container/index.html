@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Proof Container Specification v1.0 — Anchoring Specification</title>
+<title>Proof Container Specification v1.1 — Anchoring Specification</title>
 <meta name="description" content="Normative specification for the .proof container format: a portable, self-contained evidence bundle for anchoring proofs.">
 <link rel="canonical" href="https://anchoring-spec.org/proof-container/">
 <style>
@@ -36,7 +36,7 @@
 
 <h1>Proof Container Specification</h1>
 <p class="meta">
-  Version 1.0 &middot; Normative &middot; Public Domain (Unlicense)<br>
+  Version 1.1 &middot; Normative &middot; Public Domain (Unlicense)<br>
   Parent: <a href="https://anchoring-spec.org/v1.0/">Anchoring Specification (IEC) v1.0</a>
 </p>
 
@@ -89,12 +89,13 @@
 <tr><td><code>proof.ots</code></td><td>MAY</td><td>Binary ledger binding (OpenTimestamps proof)</td></tr>
 <tr><td><code>artifact.{ext}</code></td><td>MAY</td><td>The original artifact</td></tr>
 <tr><td><code>attestation.json</code></td><td>MAY</td><td>Third-party attestation</td></tr>
+<tr><td><code>passkey.json</code></td><td>MAY</td><td>Device-level WebAuthn/Passkey signature (Layer 2)</td></tr>
 </table>
 
 <p>No other files are permitted at the root level of the archive.</p>
 
 <h3>5.1 File count</h3>
-<p>A conformant Proof Container contains between 2 (minimum: certificate + VERIFY.txt) and 5 (maximum: all files) entries.</p>
+<p>A conformant Proof Container contains between 2 (minimum: certificate + VERIFY.txt) and 6 (maximum: all files) entries.</p>
 
 <h3>5.2 Artifact naming</h3>
 <p>When present, the artifact MUST be named <code>artifact.{ext}</code> where <code>{ext}</code> corresponds to the file's media type. Only one artifact file is permitted per container.</p>
@@ -193,6 +194,31 @@
 
 <h3>9.2 Independence</h3>
 <p>An attestation is independently verifiable using only the <code>attestant_public_key</code> and the signed data fields. No issuer infrastructure is required.</p>
+
+<hr>
+
+<h2>9b. Passkey Signature (Layer 2)</h2>
+<p>The optional <code>passkey.json</code> file contains a device-level WebAuthn/Passkey signature that provides Layer 2 (Device Signing) assurance. This proves that a human with biometric access to a specific device authorized the anchoring of this artifact.</p>
+
+<h3>9b.1 Required fields</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>authenticator_data</code></td><td>string</td><td>Base64url-encoded authenticator data</td></tr>
+<tr><td><code>client_data_json</code></td><td>string</td><td>Base64url-encoded client data JSON</td></tr>
+<tr><td><code>signature</code></td><td>string</td><td>Base64url-encoded signature bytes</td></tr>
+<tr><td><code>public_key</code></td><td>string</td><td>Base64url-encoded SPKI public key</td></tr>
+<tr><td><code>algorithm</code></td><td>number</td><td>COSE algorithm identifier (e.g., <code>-7</code> for ES256)</td></tr>
+<tr><td><code>challenge</code></td><td>string</td><td>The raw hex hash that was signed (must match <code>certificate.json → hash</code>)</td></tr>
+</table>
+
+<h3>9b.2 Cryptographic binding</h3>
+<p>The <code>challenge</code> field MUST exactly equal the <code>hash</code> field in <code>certificate.json</code>. This binding ensures the device signature covers the specific artifact being attested, preventing signature reuse across different artifacts.</p>
+
+<h3>9b.3 Encoding</h3>
+<p>All binary fields MUST use base64url encoding (RFC 4648 §5) without <code>=</code> padding. Implementations MUST reject values containing padding characters or characters outside the URL-safe alphabet <code>[A-Za-z0-9_-]</code>.</p>
+
+<h3>9b.4 Independence</h3>
+<p>A passkey signature is independently verifiable using the <code>public_key</code>, <code>signature</code>, and <code>authenticator_data</code>. No issuer infrastructure is required. The verification confirms that a specific device authorized the anchoring, but does not identify who controls the device.</p>
 
 <hr>
 
