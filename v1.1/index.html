@@ -177,6 +177,11 @@ code { font-family: var(--mono); font-size: 16px; }
       the name <em>Independent External Chronology</em>. No semantic, cryptographic, or interoperability
       changes have been made. v1.0-conformant implementations remain conformant with v1.1 without
       modification. v1.0 remains permanently citable at <a href="/v1.0/" style="color:var(--text-muted)">/v1.0/</a>.
+      Section 4 additionally carries an editorial note mapping the abstract notation
+      <code>V(B, P, L)</code> to the descriptive IETF profile notation
+      <code>V(ArtifactBytes, AnchorProof, AnchorLedger)</code>, with
+      <code>AnchorLedger</code> restricted to ledgers meeting the qualification criteria of the
+      profile (<em>draft-fassbender-scitt-time-anchor</em> Section 2.5).
     </p>
   </div>
 
@@ -275,6 +280,23 @@ code { font-family: var(--mono); font-size: 16px; }
       <dd>Publicly verifiable ledger infrastructure.</dd>
     </dl>
     <p>Output semantics are defined in Section 5.</p>
+    <p style="font-size:15px;line-height:1.7;color:var(--text-muted);margin-top:16px;padding:12px 16px;background:var(--surface);border-left:3px solid var(--text-dim);border-radius:2px">
+      <strong style="color:var(--text)">Note.</strong>
+      In the companion IETF profile (<em>draft-fassbender-scitt-time-anchor</em>),
+      the verification function is instantiated with descriptive parameter names
+      for clarity:
+      <span class="formula" style="display:block;margin:10px 0">V(ArtifactBytes, AnchorProof, AnchorLedger)</span>
+      where <code>ArtifactBytes</code> corresponds to <code>B</code>,
+      <code>AnchorProof</code> corresponds to <code>P</code>, and
+      <code>AnchorLedger</code> corresponds to <code>L</code>, restricted to
+      ledgers meeting the qualification criteria of the profile
+      (cf. <em>draft-fassbender-scitt-time-anchor</em> Section 2.5). The
+      semantics are identical. The short-form notation <code>V(B, P, L)</code>
+      is retained in this specification as the abstract,
+      implementation-neutral form. Implementations <span class="shall">may</span>
+      use either notation provided the semantics defined in Section 5 are
+      preserved.
+    </p>
   </div>
 
   <!-- 5. Output Semantics -->
