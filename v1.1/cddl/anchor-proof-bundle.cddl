@@ -191,7 +191,10 @@ ProofBundle = {
 ;            type. Removed "submitted" from AnchorStatus (not in production).
 ;            hash_algorithm default changed from "sha-256" to "sha256"
 ;            (production API encoding). Calendar Server federation noted as
-;            optional via "?" on calendar_url.
+;            optional via "?" on calendar_url. Introduced HashAlgorithm enum:
+;            HashOp now references it; producers SHOULD emit explicitly,
+;            verifiers MUST assume "sha256" if absent. ledger_id constrained
+;            to literal "bitcoin-mainnet" for v1.1; successor specs MAY widen.
 ;
 ; Maintained by: Umarise B.V. -- https://umarise.com
 ; =============================================================================
