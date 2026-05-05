@@ -67,10 +67,12 @@ AnchorProofBundle = {
                                              ;       extend this in a successor
                                              ;       specification.
 
-  block_height:     uint,                    ; F5:  Bitcoin block number containing
+  ? block_height:   uint,                    ; F5:  Bitcoin block number containing
                                              ;       the anchor commitment.
-                                             ;       REQUIRED for anchored proofs.
-                                             ;       Derived during verification.
+                                             ;       REQUIRED when anchor_status
+                                             ;       is "anchored". Absent in
+                                             ;       pending proofs. Derived
+                                             ;       during verification.
 
   ? block_hash:     bytes .size 32,          ; F6:  Hash of the Bitcoin block header.
                                              ;       RECOMMENDED for anchored proofs.
@@ -82,11 +84,13 @@ AnchorProofBundle = {
                                              ;       RECOMMENDED for anchored proofs.
                                              ;       Derived during verification.
 
-  block_time:       uint,                    ; F8:  Median Time Past (MTP) of block
+  ? block_time:     uint,                    ; F8:  Median Time Past (MTP) of block
                                              ;       containing the commitment.
-                                             ;       Unix timestamp. Per [BIP113].
-                                             ;       REQUIRED for anchored proofs.
-                                             ;       Derived during verification.
+                                             ;       Unix timestamp per [BIP113].
+                                             ;       REQUIRED when anchor_status
+                                             ;       is "anchored". Absent in
+                                             ;       pending proofs. Derived
+                                             ;       during verification.
 
   anchor_status:    AnchorStatus,            ; F9:  Lifecycle state of the proof.
                                              ;       REQUIRED for all proof states.
@@ -196,5 +200,5 @@ ProofBundle = {
 ;            verifiers MUST assume "sha256" if absent. ledger_id constrained
 ;            to literal "bitcoin-mainnet" for v1.1; successor specs MAY widen.
 ;
-; Maintained by: Umarise B.V. -- https://umarise.com
+; Maintained by: Umarise -- https://umarise.com
 ; =============================================================================
