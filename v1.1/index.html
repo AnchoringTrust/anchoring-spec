@@ -311,6 +311,13 @@ code { font-family: var(--mono); font-size: 16px; }
       <li>attestation metadata (non-normative)</li>
     </ul>
     <p>Attestation metadata is explicitly non-normative and has no effect on verification outcome under this specification.</p>
+
+    <h3 style="margin-top:24px"><span class="n">6.1</span> Schema Files</h3>
+    <p>A machine-retrievable CDDL (<a href="https://www.rfc-editor.org/info/rfc8610">RFC 8610</a>) schema for the Proof Bundle structure is published at:</p>
+    <ul>
+      <li><strong>CDDL schema</strong>: <a href="https://anchoring-spec.org/v1.1/cddl/anchor-proof-bundle.cddl"><code>/v1.1/cddl/anchor-proof-bundle.cddl</code></a></li>
+    </ul>
+    <p>The schema is byte-equivalent to the CDDL definitions in &sect;2.4.3 of the companion IETF draft (<code>draft-fassbender-scitt-time-anchor-02</code>). It defines two types: <code>AnchorProofBundle</code> (full logical proof, fields F1-F10) and <code>ProofBundle</code> (minimal verifier input).</p>
   </div>
 
   <!-- 7. Ledger Qualification -->
