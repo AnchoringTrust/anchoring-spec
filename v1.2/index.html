@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anchoring Specification (IEC) — v1.0</title>
+<title>Anchoring Specification — v1.2</title>
 <meta name="description" content="Normative specification for cryptographic anchoring. Defines the verification function, output semantics, proof structure, ledger qualification, independence requirements, and semantic exclusions.">
-<link rel="canonical" href="https://anchoring-spec.org/v1.0/">
+<link rel="canonical" href="https://anchoring-spec.org/v1.2/">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -91,11 +91,16 @@ body {
   margin-top: 48px; margin-bottom: 16px; line-height: 1.4;
 }
 .spec-section h2 .n { color: var(--text); font-weight: 600; margin-right: 8px; }
-.spec-section h3 { font-size: 22px; font-weight: 500; margin-top: 32px; margin-bottom: 12px; line-height: 1.4; }
+.spec-section h3 {
+  font-family: var(--mono); font-size: 12px; font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted);
+  margin-top: 32px; margin-bottom: 12px; line-height: 1.4;
+}
+.spec-section h3 .n { color: var(--text); font-weight: 600; margin-right: 8px; }
 .spec-section p { font-size: 18px; margin-bottom: 12px; line-height: 1.7; }
 .spec-section ul, .spec-section ol { padding-left: 0; list-style: none; margin-bottom: 12px; }
 .spec-section li { font-size: 18px; padding: 3px 0 3px 24px; position: relative; line-height: 1.7; }
-.spec-section li::before { content: '\2014'; position: absolute; left: 0; color: var(--text-dim); }
+.spec-section li::before { content: '\2022'; position: absolute; left: 0; color: var(--text-dim); }
 
 .definition {
   border-left: 3px solid var(--border-strong);
@@ -151,28 +156,35 @@ code { font-family: var(--mono); font-size: 16px; }
 
   <nav class="top-nav">
     <a href="/" class="site-name">Anchoring Specification</a>
-    <a href="/v1.2/">v1.2</a>
-    <a href="/v1.1/">v1.1 (current)</a>
+    <a href="/v1.2/" style="color:var(--text);font-weight:600">v1.2</a>
+    <a href="/v1.1/">v1.1</a>
     <a href="/v1.0/">v1.0</a>
     <a href="/one-page/">One-Page</a>
     <a href="/appendix/why-anchoring/">Appendix</a>
   </nav>
 
   <div class="spec-header">
-    <h1>Anchoring Specification (IEC)</h1>
-    <p style="font-size:14px;line-height:1.6;color:var(--text-muted);margin-top:0;margin-bottom:16px;padding:12px 16px;background:var(--surface);border-left:3px solid var(--text-dim);border-radius:2px">
-      <strong style="color:var(--text)">This is v1.0 (frozen).</strong>
-      A current revision <a href="/v1.1/" style="color:var(--text)">v1.1</a> is available. v1.1 is a MINOR
-      editorial revision: the document title drops the parenthetical "(IEC)" and the governance section
-      is rewritten for accuracy. No semantic, cryptographic, or interoperability changes. v1.0 remains
-      permanently citable at this URL and will not be modified.
-    </p>
+    <h1>Anchoring Specification</h1>
     <div class="spec-meta">
-      <strong>Version</strong> 1.0 — Frozen<br>
+      <strong>Version</strong> 1.2 (Current)<br>
       <strong>Status</strong> Normative<br>
-      <strong>Publication Date</strong> 2026-02-26<br>
-      <strong>Canonical URI</strong> https://anchoring-spec.org/v1.0/
+      <strong>Publication Date</strong> 2026-05-05<br>
+      <strong>Supersedes</strong> v1.1 (frozen, available at /v1.1/)<br>
+      <strong>Canonical URI</strong> https://anchoring-spec.org/v1.2/
     </div>
+    <p style="font-size:14px;line-height:1.6;color:var(--text-muted);margin-top:16px;padding:12px 16px;background:var(--surface);border-left:3px solid var(--text-dim);border-radius:2px">
+      <strong style="color:var(--text)">v1.2 is a MINOR editorial revision over v1.1,</strong>
+      consolidating clarifications in alignment with the publication of the companion IETF profile
+      (<code>draft-fassbender-scitt-time-anchor-02</code>). Editorial changes are: addition of CDDL
+      schema reference (&sect;6.1); clarification of structural inclusion-point semantics, with
+      explicit treatment of block-based ledgers and the Reference Wall-Clock Projection (&sect;15);
+      expansion of the verification function companion-note (&sect;4); broadening of the Time (T)
+      terminology entry to cover both structural and wall-clock forms (&sect;2). No semantic,
+      cryptographic, or interoperability changes have been made. v1.0- and v1.1-conformant
+      implementations remain conformant with v1.2 without modification. v1.1 and v1.0 remain
+      permanently citable at <a href="/v1.1/" style="color:var(--text-muted)">/v1.1/</a> and
+      <a href="/v1.0/" style="color:var(--text-muted)">/v1.0/</a>.
+    </p>
   </div>
 
   <!-- Non-Normative Introduction -->
@@ -235,13 +247,13 @@ code { font-family: var(--mono); font-size: 16px; }
     <h2><span class="n">2</span> Terminology</h2>
     <dl class="term-list">
       <dt>Artifact (B)</dt>
-      <dd>A finite byte sequence. B <span class="shall">may</span> represent any byte sequence, including derived artifacts. IEC does not interpret the semantic meaning of B.</dd>
+      <dd>A finite byte sequence. B <span class="shall">may</span> represent any byte sequence, including derived artifacts. This specification does not interpret the semantic meaning of B.</dd>
       <dt>Proof Bundle (P)</dt>
       <dd>A structured set of data sufficient to verify anchoring claims.</dd>
       <dt>Ledger Infrastructure (L)</dt>
       <dd>A publicly verifiable consensus system capable of establishing temporal ordering.</dd>
       <dt>Time (T)</dt>
-      <dd>A timestamp derived from consensus-confirmed ledger inclusion. Time T <span class="shall">must not</span> be self-asserted by the issuing entity.</dd>
+      <dd>A consensus-derived temporal reference associated with ledger inclusion of a commitment. T <span class="shall">may</span> be a structural identifier (such as a block height) or a wall-clock value derived from such an identifier. T <span class="shall">must not</span> be self-asserted by the issuing entity. Profile specifications define which form of T is normative for a given ledger; see &sect;15.</dd>
     </dl>
   </div>
 
@@ -270,6 +282,28 @@ code { font-family: var(--mono); font-size: 16px; }
       <dd>Publicly verifiable ledger infrastructure.</dd>
     </dl>
     <p>Output semantics are defined in Section 5.</p>
+    <p style="font-size:15px;line-height:1.7;color:var(--text-muted);margin-top:16px;padding:12px 16px;background:var(--surface);border-left:3px solid var(--text-dim);border-radius:2px">
+      <strong style="color:var(--text)">Note.</strong>
+      In the companion IETF profile (<em>draft-fassbender-scitt-time-anchor</em>),
+      the verification function is instantiated with descriptive parameter names
+      for clarity:
+      <span class="formula" style="display:block;margin:10px 0">V(ArtifactBytes, AnchorProof, AnchorLedger)</span>
+      where <code>ArtifactBytes</code> corresponds to <code>B</code>,
+      <code>AnchorProof</code> corresponds to <code>P</code>, and
+      <code>AnchorLedger</code> corresponds to <code>L</code>, restricted to
+      ledgers meeting the qualification criteria of the profile
+      (cf. <em>draft-fassbender-scitt-time-anchor</em> Section 2.5). The
+      semantics are identical. The short-form notation <code>V(B, P, L)</code>
+      is retained in this specification as the abstract,
+      implementation-neutral form. Implementations <span class="shall">may</span>
+      use either notation provided the semantics defined in Section 5 are
+      preserved.
+      The IETF profile additionally specifies its normative temporal binding as
+      the Bitcoin block height containing the OP_RETURN commitment, with
+      <code>block.time</code> provided as a Reference Wall-Clock Projection for
+      human readability. This is one valid instantiation of the abstract Time T
+      defined in &sect;15.
+    </p>
   </div>
 
   <!-- 5. Output Semantics -->
@@ -310,7 +344,14 @@ code { font-family: var(--mono); font-size: 16px; }
     <ul>
       <li>attestation metadata (non-normative)</li>
     </ul>
-    <p>Attestation metadata is explicitly non-normative and has no effect on verification outcome under IEC.</p>
+    <p>Attestation metadata is explicitly non-normative and has no effect on verification outcome under this specification.</p>
+
+    <h3><span class="n">6.1</span> Schema Files</h3>
+    <p>A machine-retrievable CDDL (<a href="https://www.rfc-editor.org/info/rfc8610">RFC 8610</a>) schema for the Proof Bundle structure is published at:</p>
+    <ul>
+      <li><strong>CDDL schema</strong>: <a href="https://anchoring-spec.org/v1.2/cddl/anchor-proof-bundle.cddl"><code>/v1.2/cddl/anchor-proof-bundle.cddl</code></a></li>
+    </ul>
+    <p>The schema is byte-equivalent to the CDDL definitions in &sect;2.4.3 of the companion IETF draft (<code>draft-fassbender-scitt-time-anchor-02</code>). It defines two types: <code>AnchorProofBundle</code> (full logical proof, fields F1-F10) and <code>ProofBundle</code> (minimal verifier input).</p>
   </div>
 
   <!-- 7. Ledger Qualification -->
@@ -371,25 +412,25 @@ code { font-family: var(--mono); font-size: 16px; }
   <!-- 11. Versioning -->
   <div class="spec-section" id="versioning">
     <h2><span class="n">11</span> Versioning</h2>
-    <p>IEC uses <strong>MAJOR.MINOR</strong> versioning.</p>
+    <p>This specification uses <strong>MAJOR.MINOR</strong> versioning.</p>
     <ul>
       <li><strong>MAJOR</strong> increments indicate breaking semantic changes</li>
       <li><strong>MINOR</strong> increments indicate clarifications without semantic change</li>
     </ul>
     <p>All published versions <span class="shall">must</span> remain permanently accessible at their canonical URI.</p>
-    <p>Current version: <strong>v1.0</strong><br>Canonical URI: <a href="/v1.0/" style="color:var(--text-muted)">https://anchoring-spec.org/v1.0/</a></p>
+    <p>Current version: <strong>v1.2</strong><br>Canonical URI: <a href="/v1.2/" style="color:var(--text-muted)">https://anchoring-spec.org/v1.2/</a><br>Previous versions:<br>&nbsp;&nbsp;<strong>v1.1</strong> (frozen) <a href="/v1.1/" style="color:var(--text-muted)">/v1.1/</a><br>&nbsp;&nbsp;<strong>v1.0</strong> (frozen) <a href="/v1.0/" style="color:var(--text-muted)">/v1.0/</a></p>
   </div>
 
   <!-- 12. Governance -->
   <div class="spec-section" id="governance">
     <h2><span class="n">12</span> Governance</h2>
-    <p>The Anchoring Specification (IEC) is a public, versioned technical specification.</p>
-    <p>IEC was initially authored by <a href="https://umarise.com" style="color:var(--text-muted)">Umarise</a>. The specification is published openly and <span class="shall">may</span> be implemented by any party without restriction.</p>
-    <p>The specification is not proprietary to any single implementation or commercial entity.</p>
-    <p>Implementations <span class="shall">may</span> reference compliance with a specific IEC version.</p>
+    <p>The Anchoring Specification is a public, versioned technical specification, released into the public domain.</p>
+    <p>It is currently authored and maintained by the <a href="https://umarise.com" style="color:var(--text-muted)">Umarise</a> team. There is no foundation, consortium, or multi-stakeholder governance body. This is a single-maintainer specification.</p>
+    <p>The specification is open for implementation by any party without restriction. Any party <span class="shall">may</span> fork, mirror, or republish it under any terms permitted by the public domain.</p>
+    <p>Implementations <span class="shall">may</span> reference compliance with a specific specification version.</p>
     <p><strong>No implementation has normative authority over the specification.</strong></p>
     <p>If conflicts arise between an implementation and the specification, the specification prevails.</p>
-    <p>Governance of IEC <span class="shall">may</span> evolve independently of any single organization, including its original author.</p>
+    <p>External co-maintainers and multi-stakeholder governance are welcome and may be adopted if and when adoption warrants it. Until then, governance independence is not claimed. <strong>Technical independence</strong> (the property that proofs verify without the issuer) is established by Section 9 and is independent of governance.</p>
   </div>
 
   <!-- 13. Threat Model -->
@@ -421,8 +462,8 @@ code { font-family: var(--mono); font-size: 16px; }
       <li>have no known practical collision attacks</li>
       <li>be widely reviewed by the cryptographic community</li>
     </ul>
-    <p>If a hash function becomes compromised, future IEC versions <span class="shall">may</span> deprecate its use.</p>
-    <p>IEC permits future versions to introduce alternative cryptographic primitives. Algorithm agility is supported through versioned specification updates.</p>
+    <p>If a hash function becomes compromised, future versions of this specification <span class="shall">may</span> deprecate its use.</p>
+    <p>This specification permits future versions to introduce alternative cryptographic primitives. Algorithm agility is supported through versioned specification updates.</p>
   </div>
 
   <!-- 15. Time Semantics -->
@@ -431,7 +472,9 @@ code { font-family: var(--mono); font-size: 16px; }
     <p>Time T is defined as the earliest consensus-confirmed inclusion point of the commitment in ledger L.</p>
     <p>Anchoring establishes existence-at-or-before-T.</p>
     <p>It does not establish exact creation time.</p>
-    <p>Finalization criteria are ledger-specific and defined by the operational consensus rules of ledger L. IEC does not prescribe a fixed confirmation threshold.</p>
+    <p>The "inclusion point" referenced above is a structural fact in the ledger's data model. For ledgers structured as a chain of blocks (such as Bitcoin), the inclusion point is the block at which the commitment becomes consensus-fixed; this block is identified by its block height or equivalent canonical position. A wall-clock value associated with that block (such as Bitcoin's <code>block.time</code> or <code>nTime</code> field) <span class="shall">may</span> be exposed as a Reference Wall-Clock Projection for human readability, but the normative inclusion point is the block itself, not the wall-clock value.</p>
+    <p>Implementations of profile specifications (such as the IETF profile in <em>draft-fassbender-scitt-time-anchor</em>) <span class="shall">may</span> define their normative temporal binding in terms of the structural inclusion point (e.g., block height) and present any wall-clock projection as informative.</p>
+    <p>Finalization criteria are ledger-specific and defined by the operational consensus rules of ledger L. This specification does not prescribe a fixed confirmation threshold.</p>
   </div>
 
   <!-- 16. Non-Retroactivity -->
@@ -446,12 +489,12 @@ code { font-family: var(--mono); font-size: 16px; }
     <h2><span class="n">17</span> Compliance Statement</h2>
     <p>An implementation claiming compliance <span class="shall">must</span> state:</p>
     <ul>
-      <li>the IEC version</li>
+      <li>the specification version</li>
       <li>the hash function used</li>
       <li>the ledger type used</li>
       <li>any deviations from default proof structure</li>
     </ul>
-    <p>Compliance claims <span class="shall">must</span> reference a specific IEC version.</p>
+    <p>Compliance claims <span class="shall">must</span> reference a specific specification version.</p>
     <p>An implementation is non-conformant if it:</p>
     <ul>
       <li>extends or alters the outputs defined in Section 5</li>
@@ -479,7 +522,7 @@ code { font-family: var(--mono); font-size: 16px; }
   </div>
 
   <footer>
-    Canonical publication of the Anchoring Specification (IEC v1.0 — Frozen).<br>
+    Canonical publication of the Anchoring Specification v1.1 (Current).<br>
     The specification is normative. Implementations are not.<br><br>
     <a href="https://verify-anchoring.org" target="_blank" rel="noopener">Reference verifier</a> ·
     <a href="/one-page/">One-page reference</a> ·

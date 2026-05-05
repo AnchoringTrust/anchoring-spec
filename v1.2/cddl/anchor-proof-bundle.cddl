@@ -1,0 +1,206 @@
+; =============================================================================
+; Umarise Anchoring Specification -- CDDL Schema
+; Version: 1.1 (companion to draft-fassbender-scitt-time-anchor-02)
+; Published: https://anchoring-spec.org/v1.1/cddl/anchor-proof-bundle.cddl
+; =============================================================================
+;
+; This file defines two CDDL schemas:
+;
+;   1. AnchorProofBundle  -- the full logical proof object (fields F1-F10)
+;                            as defined in Section 2.4.1 of the IETF draft.
+;                            Corresponds to Table 1 (Abstract Field Requirements)
+;                            and Table 2 (OTS Wire Format Mapping).
+;
+;   2. ProofBundle        -- the minimal input structure for the VERIFY-ANCHOR
+;                            algorithm (Section 3.1 of the IETF draft).
+;                            This is the normative input type.
+;
+; Reference: draft-fassbender-scitt-time-anchor-02
+;            https://datatracker.ietf.org/doc/draft-fassbender-scitt-time-anchor/
+;
+; CDDL specification: RFC 8610
+;   https://www.rfc-editor.org/info/rfc8610
+;
+; =============================================================================
+
+start = AnchorProofBundle
+
+
+; -----------------------------------------------------------------------------
+; AnchorProofBundle
+;
+; The full logical representation of an Anchor Proof, corresponding to
+; the abstract fields F1-F10 in Table 1 of the IETF draft.
+;
+; Fields F5-F8 (block_height, block_hash, tx_id, block_time) are derived
+; by the verifier from the Bitcoin blockchain during VERIFY-ANCHOR execution
+; (steps 6-7 of Section 3.1). They need not be present in the serialized
+; proof bundle. Their presence in this schema reflects the logical fields
+; of a fully-verified proof, not mandatory wire format fields.
+;
+; The OpenTimestamps binary (.ots) encoding of these fields is defined in
+; Table 2 of the IETF draft (OTS Wire Format Mapping).
+; -----------------------------------------------------------------------------
+
+AnchorProofBundle = {
+  artifact_hash:    bytes .size 32,          ; F1:  SHA-256 digest of the anchored
+                                             ;       artifact byte sequence.
+                                             ;       REQUIRED for all proof states.
+
+  hash_algorithm:   HashAlgorithm .default "sha256",
+                                             ; F2:  Hash algorithm identifier.
+                                             ;       Producers SHOULD emit
+                                             ;       explicitly. Verifiers MUST
+                                             ;       assume "sha256" if absent.
+                                             ;       Future versions MAY define
+                                             ;       additional identifiers (see
+                                             ;       Hash Algorithm Agility,
+                                             ;       Section 5.6 of IETF draft).
+
+  merkle_path:      [+ MerkleOp],            ; F3:  Ordered sequence of Merkle
+                                             ;       operations linking F1 to the
+                                             ;       ledger commitment.
+                                             ;       REQUIRED for all proof states.
+
+  ledger_id:        "bitcoin-mainnet",        ; F4:  Anchor Ledger identifier.
+                                             ;       v1.1: only "bitcoin-mainnet"
+                                             ;       is valid under this profile.
+                                             ;       Future qualified ledgers MAY
+                                             ;       extend this in a successor
+                                             ;       specification.
+
+  ? block_height:   uint,                    ; F5:  Bitcoin block number containing
+                                             ;       the anchor commitment.
+                                             ;       REQUIRED when anchor_status
+                                             ;       is "anchored". Absent in
+                                             ;       pending proofs. Derived
+                                             ;       during verification.
+
+  ? block_hash:     bytes .size 32,          ; F6:  Hash of the Bitcoin block header.
+                                             ;       RECOMMENDED for anchored proofs.
+                                             ;       Derived during verification.
+
+  ? tx_id:          bytes .size 32,          ; F7:  Bitcoin transaction identifier
+                                             ;       containing the OP_RETURN
+                                             ;       commitment.
+                                             ;       RECOMMENDED for anchored proofs.
+                                             ;       Derived during verification.
+
+  ? block_time:     uint,                    ; F8:  Median Time Past (MTP) of block
+                                             ;       containing the commitment.
+                                             ;       Unix timestamp per [BIP113].
+                                             ;       REQUIRED when anchor_status
+                                             ;       is "anchored". Absent in
+                                             ;       pending proofs. Derived
+                                             ;       during verification.
+
+  anchor_status:    AnchorStatus,            ; F9:  Lifecycle state of the proof.
+                                             ;       REQUIRED for all proof states.
+
+  ? calendar_url:   uri,                     ; F10: URL of the OTS Calendar Server
+                                             ;       used for submission.
+                                             ;       OPTIONAL. Informational only.
+                                             ;       Present in pending proofs.
+}
+
+
+; -----------------------------------------------------------------------------
+; AnchorStatus
+;
+; Lifecycle states for an Anchor Proof.
+;
+;   "pending"  -- The hash has been submitted to a Calendar Server but the
+;                 Bitcoin transaction has not yet been confirmed. The proof
+;                 is NOT independently verifiable at this stage.
+;
+;   "anchored" -- The Bitcoin transaction containing the commitment has been
+;                 confirmed to a depth satisfying the deployment's confirmation
+;                 threshold. The proof IS independently verifiable.
+;
+;   "failed"   -- The anchoring process failed (e.g., calendar unreachable,
+;                 transaction dropped). The proof is NOT valid.
+; -----------------------------------------------------------------------------
+
+AnchorStatus = "pending" / "anchored" / "failed"
+
+
+; -----------------------------------------------------------------------------
+; MerkleOp, PrependOp, AppendOp, HashOp
+;
+; Represent the sequence of commitment operations linking the artifact hash
+; to the Bitcoin OP_RETURN value. Corresponds to the OTS binary encoding:
+;   - Prepend: tag 0xf1
+;   - Append:  tag 0xf0
+;   - Hash:    tag 0x08 (SHA-256)
+; -----------------------------------------------------------------------------
+
+MerkleOp  = PrependOp / AppendOp / HashOp
+
+PrependOp = { 1 => bytes }                   ; Prepend bytes before hashing
+                                             ; OTS wire encoding: 0xf1
+
+AppendOp  = { 2 => bytes }                   ; Append bytes before hashing
+                                             ; OTS wire encoding: 0xf0
+
+HashOp    = { 3 => HashAlgorithm }           ; Apply hash function
+                                             ; OTS wire encoding: 0x08
+
+; HashAlgorithm enum -- v1.1: only SHA-256 defined.
+; Future versions MAY extend with additional identifiers (e.g. "sha3-256").
+; Using an enum now makes v2 a clean extension, not a type change.
+HashAlgorithm = "sha256"                     ; SHA-256 [FIPS180-4]
+
+
+; =============================================================================
+; ProofBundle
+;
+; The minimal input structure for the VERIFY-ANCHOR algorithm
+; (Section 3.1 of the IETF draft).
+;
+; This is the normative input type. An implementation constructing a
+; ProofBundle MUST populate ots_proof and claimed_hash. The verifier
+; MUST NOT treat claimed_hash as authoritative; it MUST recompute the
+; hash independently from the artifact bytes (VERIFY-ANCHOR step 1).
+; =============================================================================
+
+ProofBundle = {
+  ots_proof:              bytes,   ; REQUIRED: Binary .ots proof file.
+                                   ;           OpenTimestamps wire format
+                                   ;           as described in Table 2 of
+                                   ;           the IETF draft.
+
+  claimed_hash:           tstr,    ; REQUIRED: SHA-256 hash of the artifact,
+                                   ;           encoded as hex string with
+                                   ;           optional "sha256:" prefix.
+                                   ;           Example: "sha256:781bb71a..."
+                                   ;           NOT authoritative -- verifier
+                                   ;           MUST recompute independently.
+
+  ? origin_id:            tstr,    ; OPTIONAL: Implementation-defined
+                                   ;           identifier for the anchoring
+                                   ;           record. Not used in verification.
+                                   ;           Included for traceability only.
+
+  ? bitcoin_block_height: uint,    ; OPTIONAL: Cached block height from a
+                                   ;           prior verification run.
+                                   ;           Not used in verification.
+                                   ;           Informational only.
+}
+
+
+; =============================================================================
+; END OF SCHEMA
+;
+; Changelog:
+;   v1.0  -- Initial schema (implicit, draft-fassbender-scitt-time-anchor-01)
+;   v1.1  -- Explicit CDDL publication. Added ProofBundle as normative input
+;            type. Removed "submitted" from AnchorStatus (not in production).
+;            hash_algorithm default changed from "sha-256" to "sha256"
+;            (production API encoding). Calendar Server federation noted as
+;            optional via "?" on calendar_url. Introduced HashAlgorithm enum:
+;            HashOp now references it; producers SHOULD emit explicitly,
+;            verifiers MUST assume "sha256" if absent. ledger_id constrained
+;            to literal "bitcoin-mainnet" for v1.1; successor specs MAY widen.
+;
+; Maintained by: Umarise -- https://umarise.com
+; =============================================================================
