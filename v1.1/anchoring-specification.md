@@ -104,6 +104,14 @@ A conformant proof bundle MAY contain:
 - Metadata (origin identifier, capture context)
 - Additional attestations
 
+### 6.1. Schema Files
+
+A machine-retrievable CDDL [RFC 8610](https://www.rfc-editor.org/info/rfc8610) schema for the Proof Bundle structure is published at:
+
+- **CDDL schema**: [https://anchoring-spec.org/v1.1/cddl/anchor-proof-bundle.cddl](https://anchoring-spec.org/v1.1/cddl/anchor-proof-bundle.cddl)
+
+The schema is byte-equivalent to the CDDL definitions in §2.4.3 of the companion IETF draft (`draft-fassbender-scitt-time-anchor-02`). It defines two types: `AnchorProofBundle` (full logical proof, fields F1-F10) and `ProofBundle` (minimal verifier input).
+
 ---
 
 ## 7. Ledger Qualification
