@@ -1,7 +1,7 @@
 ; =============================================================================
 ; Umarise Anchoring Specification -- CDDL Schema
-; Version: 1.1 (companion to draft-fassbender-scitt-time-anchor-02)
-; Published: https://anchoring-spec.org/v1.1/cddl/anchor-proof-bundle.cddl
+; Version: 1.2 (companion to draft-fassbender-scitt-time-anchor-02)
+; Published: https://anchoring-spec.org/v1.2/cddl/anchor-proof-bundle.cddl
 ; =============================================================================
 ;
 ; This file defines two CDDL schemas:
@@ -86,9 +86,15 @@ AnchorProofBundle = {
                                              ;       RECOMMENDED for anchored proofs.
                                              ;       Derived during verification.
 
-  ? block_time:     uint,                    ; F8:  Median Time Past (MTP) of block
-                                             ;       containing the commitment.
-                                             ;       Unix timestamp per [BIP113].
+  ? block_time:     uint,                    ; F8:  Bitcoin block header timestamp
+                                             ;       (block.time / nTime field).
+                                             ;       Unix timestamp.
+                                             ;       Reference Wall-Clock Projection
+                                             ;       (informative; see Section 1.3
+                                             ;       and Section 2.6.6 of IETF draft).
+                                             ;       NOT the normative temporal value;
+                                             ;       the normative value is the
+                                             ;       block-height binding (F5).
                                              ;       REQUIRED when anchor_status
                                              ;       is "anchored". Absent in
                                              ;       pending proofs. Derived
@@ -201,6 +207,17 @@ ProofBundle = {
 ;            HashOp now references it; producers SHOULD emit explicitly,
 ;            verifiers MUST assume "sha256" if absent. ledger_id constrained
 ;            to literal "bitcoin-mainnet" for v1.1; successor specs MAY widen.
+;
+;   v1.2  -- Companion to draft-fassbender-scitt-time-anchor-02. Aligned F8
+;            (block_time) semantics with -02 Section 2.6: block_time is now
+;            documented as block.time / nTime (the Reference Wall-Clock
+;            Projection, informative), not Median Time Past (MTP). The
+;            normative temporal value of a verified proof is the block-height
+;            binding (F5); see -02 Section 2.6.1. MTP per BIP113 is retained
+;            in the IETF draft as an OPTIONAL strict-lower-bound for verifiers
+;            that want a monotonic wall-clock interpretation, but is not the
+;            value carried in F8. No wire-format or structural changes; this
+;            revision is documentation-only and byte-compatible with v1.1.
 ;
 ; Maintained by: Umarise -- https://umarise.com
 ; =============================================================================
