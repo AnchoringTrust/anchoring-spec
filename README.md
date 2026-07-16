@@ -10,8 +10,8 @@
 
 This repository contains the normative Anchoring Specification.
 
-**Current version:** [v1.1](https://anchoring-spec.org/v1.1/) (Current)
-**Previous version:** [v1.0](https://anchoring-spec.org/v1.0/) (Frozen, permanently citable)
+**Current version:** [v1.3](https://anchoring-spec.org/v1.3/) (Current)
+**Previous versions:** [v1.2](https://anchoring-spec.org/v1.2/), [v1.1](https://anchoring-spec.org/v1.1/), [v1.0](https://anchoring-spec.org/v1.0/) (frozen, permanently citable)
 
 Anchoring is a public infrastructure primitive built on cryptographic commitments. It establishes one property only:
 
@@ -63,6 +63,8 @@ If any behavior in an implementation conflicts with this specification, the spec
 
 ```
 /                          → Current normative version (v1.1)
+/v1.3/                     → Permanent, citable v1.3 (current)
+/v1.2/                     → Permanent, citable v1.2
 /v1.1/                     → Permanent, citable v1.1 (current)
 /v1.0/                     → Permanent, citable v1.0
 /proof-container/          → Proof Container Specification v1.0
@@ -75,20 +77,20 @@ If any behavior in an implementation conflicts with this specification, the spec
 ## How to cite
 
 ```
-Anchoring Specification, Version 1.1.
-Published: April 2026.
-Canonical URL: https://anchoring-spec.org/v1.1/
+Anchoring Specification, Version 1.3.
+Published: 2026-07-15.
+Canonical URL: https://anchoring-spec.org/v1.3/
 Repository: https://github.com/AnchoringTrust/anchoring-spec
 License: Public Domain (Unlicense)
 ```
 
 BibTeX:
 ```bibtex
-@misc{anchoring-spec-v1-1,
+@misc{anchoring-spec-v1-3,
   title        = {Anchoring Specification},
-  version      = {1.1},
+  version      = {1.3},
   year         = {2026},
-  url          = {https://anchoring-spec.org/v1.1/},
+  url          = {https://anchoring-spec.org/v1.3/},
   note         = {Public domain. Normative specification for cryptographic anchoring. Semantic model: Independent External Chronology.}
 }
 ```

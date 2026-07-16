@@ -1,0 +1,20 @@
+; Anchoring Specification v1.3
+; CDDL (RFC 8610) schema for the Proof Bundle
+; https://anchoring-spec.org/v1.3/
+;
+; Scope note. CDDL describes CBOR and JSON data models. It is therefore
+; used here only for the verifier input structure. The ledger inclusion
+; proof is carried as an opaque byte string: its internal encoding is
+; defined by the proof format in use and is not described by this schema.
+;
+; This file supersedes /v1.2/cddl/anchor-proof-bundle.cddl, which also
+; defined a type AnchorProofBundle modelling the internal structure of an
+; OpenTimestamps proof. That type is withdrawn; see Section 6.1. The v1.2
+; file remains at its canonical URI for citation.
+
+ProofBundle = {
+  ots_proof:              bytes,   ; REQUIRED: binary .ots file
+  claimed_hash:           tstr,    ; REQUIRED: "sha256:<hex>"
+  ? origin_id:            tstr,    ; OPTIONAL: traceability id
+  ? bitcoin_block_height: uint,    ; OPTIONAL: cached block height
+}
